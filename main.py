@@ -1,25 +1,23 @@
-from flask import Flask, request, Response
+from flask import Flask, Response, request
 from pytube import YouTube
 
 app = Flask(__name__)
 
 
 @app.route('/download')
-def pager():
-  link = request.args.get('link', default=None)
+def download():
+  link = request.headers.get('link', default=None)
   if link is None:
     return Response(
         status=401,
         response='{"error": "No link provided"}',
     )
 
-  youtube = YouTube(
-      url='https://youtube.com/shorts/5hECAEzmBxc?feature=shared')
+  youtube = YouTube(url=link)
 
   output = []
-  files = youtube.streams
 
-  for file in files:
+  for file in youtube.streams:
     if 'webm' not in file.mime_type:
       output.append({
           'type': file.mime_type,
@@ -34,9 +32,29 @@ def pager():
   return output
 
 
+@app.route('/metadata')
+def metadata():
+  link = request.headers.get('link', default=None)
+
+  if link is None:
+    return Response(
+        status=401,
+        response='{"error": "No link provided"}',
+    )
+
+  youtube = YouTube(url=link)
+
+  output = {
+      'title': youtube.title,
+      'views': youtube.views,
+      'thumbnail': youtube.thumbnail_url
+  }
+
+  return output
+
+
 @app.route('/')
 def index():
-
   return f'Video ID : youtube.video_id'
 
 
