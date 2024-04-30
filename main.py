@@ -18,7 +18,10 @@ def pager():
   files = youtube.streams
 
   for file in files:
-    print(f'{file.includes_audio_track}')
+    if 'webm' not in file.mime_type:
+      print(
+          f'{file.includes_audio_track} : {file.includes_video_track}:{file.mime_type} : {file.resolution}'
+      )
 
   return f'Video ID : {link}'
 
