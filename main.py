@@ -1,23 +1,31 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 from pytube import YouTube
 
 app = Flask(__name__)
 
 
-@app.route('/pager')
+@app.route('/download')
 def pager():
   link = request.args.get('link', default=None)
   if link is None:
-    return 'Failed'
+    return Response(
+        status=401,
+        response='{"error": "No link provided"}',
+    )
 
-  youtube = YouTube(url=link)
+  youtube = YouTube(url='https://youtu.be/seNW8WeHyLs?feature=shared')
 
-  return f'Video ID : {youtube.video_id}'
+  files = youtube.streams
+
+  for file in files:
+    print(f'{file.includes_audio_track}')
+
+  return f'Video ID : {link}'
 
 
 @app.route('/')
 def index():
-  
+
   return f'Video ID : youtube.video_id'
 
 
