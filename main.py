@@ -13,17 +13,25 @@ def pager():
         response='{"error": "No link provided"}',
     )
 
-  youtube = YouTube(url='https://youtu.be/seNW8WeHyLs?feature=shared')
+  youtube = YouTube(
+      url='https://youtube.com/shorts/5hECAEzmBxc?feature=shared')
 
+  output = []
   files = youtube.streams
 
   for file in files:
     if 'webm' not in file.mime_type:
-      print(
-          f'{file.includes_audio_track} : {file.includes_video_track}:{file.mime_type} : {file.resolution}'
-      )
+      output.append({
+          'type': file.mime_type,
+          'quality': file.resolution,
+          'size': file.filesize,
+          'sizeKB': file.filesize_kb,
+          'sizeMB': file.filesize_mb,
+          'hasAudio': file.includes_audio_track,
+          'hasVideo': file.includes_video_track
+      })
 
-  return f'Video ID : {link}'
+  return output
 
 
 @app.route('/')
